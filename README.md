@@ -22,7 +22,7 @@
 
 1. **取得程式碼**  
    ```bash
-   git clone <你的倉庫地址>
+   git clone <https://github.com/diave991/fliQt.git>
    cd fliQt
    ```
 
@@ -266,6 +266,69 @@
     }
   ]
   ```
+
+### 出缺勤報表 (Reports)
+
+#### 單一員工報表 (IN/OUT)
+
+- **路徑**：`GET /api/v1/reports/{employee_id}`
+  
+- **Response (OUT)**
+  ```json
+  [
+       { "date": "2025-05-05", "status": "absent" },
+       { "date": "2025-05-06", "status": "present" },
+       { "date": "2025-05-07", "status": "leave" },
+       { "date": "2025-05-08", "status": "present" },
+       { "date": "2025-05-09", "status": "present" },
+       { "date": "2025-05-10", "status": "absent" },
+       { "date": "2025-05-11", "status": "present" }
+    ]
+  ```
+
+#### 查詢員工當日打卡 (含員工姓名/職位)
+
+- **路徑**：`GET /api/v1/reports?page=1`
+- **Response (OUT)**
+  ```json
+  {
+  "page": 1,
+  "data": [
+    {
+      "employee_id": 1,
+      "employee_name": "王小明",
+      "employee_position": "資深後端工程師",
+      "report": [
+        { "date": "2025-05-05", "status": "absent" },
+        { "date": "2025-05-06", "status": "present" },
+        { "date": "2025-05-07", "status": "leave" },
+        { "date": "2025-05-08", "status": "present" },
+        { "date": "2025-05-09", "status": "present" },
+        { "date": "2025-05-10", "status": "absent" },
+        { "date": "2025-05-11", "status": "present" }
+      ]
+    },
+    {
+      "employee_id": 2,
+      "employee_name": "李麗華",
+      "employee_position": "前端工程師",
+      "report": [
+        { "date": "2025-05-05", "status": "absent" },
+        { "date": "2025-05-06", "status": "absent" },
+        { "date": "2025-05-07", "status": "absent" },
+        { "date": "2025-05-08", "status": "present" },
+        { "date": "2025-05-09", "status": "present" },
+        { "date": "2025-05-10", "status": "present" },
+        { "date": "2025-05-11", "status": "absent" }
+      ]
+    }
+    // ...更多筆資料...
+   ]
+  ```
+- **狀態判斷**
+- - **請假(leave)：當天有請假區間**
+- - **出勤(present)：無請假但有打卡記錄**
+- - **缺席(absent)：既無請假也無打卡**
 
 ## Makefile 指令
 

@@ -57,8 +57,27 @@ func main() {
 	attSvc := services.NewAttendanceService(attRepo)
 	attCtrl := controllers.NewAttendanceController(attSvc)
 
+	reportSvc := services.NewReportService(
+		mysqlDB,
+		redisClient,
+		empRepo,
+		leaveRepo,
+		attRepo,
+	)
+	reportCtrl := controllers.NewReportController(reportSvc)
+	// 6. 啟動定時排程：每 10 分鐘跑一次，全併發 5 個 worker
+	go func() {
+		ticker := time.NewTicker(1 * time.Minute)
+		defer ticker.Stop()
+		for {
+			reportSvc.RunScheduler(context.Background())
+			<-ticker.C
+		}
+	}()
+
 	r := gin.Default()
-	routes.Setup(r, empCtrl, leaveCtrl, attCtrl)
+	routes.Setup(r, empCtrl, leaveCtrl, attCtrl, reportCtrl)
+	//routes.Setup(r, empCtrl, leaveCtrl, attCtrl)
 
 	r.Run() // default :8080
 }

@@ -5,7 +5,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Setup(r *gin.Engine, empCtrl *controllers.EmployeeController, leaveCtrl *controllers.LeaveController, attCtrl *controllers.AttendanceController) {
+func Setup(r *gin.Engine,
+	empCtrl *controllers.EmployeeController,
+	leaveCtrl *controllers.LeaveController,
+	attCtrl *controllers.AttendanceController,
+	reportCtrl *controllers.ReportController,
+) {
 	api := r.Group("/api/v1")
 	{
 		// Employee
@@ -30,6 +35,13 @@ func Setup(r *gin.Engine, empCtrl *controllers.EmployeeController, leaveCtrl *co
 			at.GET("", attCtrl.GetAll)
 			at.GET("/:id", attCtrl.GetByID)
 			at.GET("/by_employee", attCtrl.GetByEmployee) // ?employee_id=xx[&date=YYYY-MM-DD]
+		}
+
+		// 出缺勤報表
+		rp := api.Group("/reports")
+		{
+			rp.GET("", reportCtrl.ListReports)
+			rp.GET("/:employee_id", reportCtrl.GetReport)
 		}
 	}
 }
